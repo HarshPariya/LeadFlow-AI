@@ -12,7 +12,9 @@ import { env } from "@/lib/env";
  * login sets.
  */
 export async function GET(req: NextRequest) {
-  const appUrl = env.NEXT_PUBLIC_APP_URL;
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+  const proto = req.headers.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https");
+  const appUrl = host ? `${proto}://${host}` : env.NEXT_PUBLIC_APP_URL;
   const { searchParams } = req.nextUrl;
 
   const code = searchParams.get("code");
