@@ -1,0 +1,48 @@
+# Render Blueprint Configuration for LeadFlow AI
+# Deploy as a Web Service or Docker container on Render
+
+services:
+  - type: web
+    name: leadflow-ai
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: INTEGRATION_MODE
+        value: live
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: INTEGRATION_ENCRYPTION_KEY
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: TWENTY_API_URL
+        value: https://api.twenty.com
+      - key: TWENTY_API_KEY
+        sync: false
+      - key: TWENTY_WORKFLOW_WEBHOOK_URL
+        sync: false
+      - key: ZAPIER_LEAD_WEBHOOK_URL
+        sync: false
+      - key: ZAPIER_STATUS_WEBHOOK_SECRET
+        generateValue: true
+      - key: WEBHOOK_SECRET
+        generateValue: true
+      - key: SALES_NOTIFICATION_EMAIL
+        value: sales@leadflow.ai
+      - key: GMAIL_ENABLED
+        value: false

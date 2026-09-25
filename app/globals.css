@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* LeadFlow AI Warm Beige Theme Tokens */
+    --background: #F9F8F5;
+    --foreground: #1C1B18;
+
+    --card: #FFFFFF;
+    --card-foreground: #1C1B18;
+
+    --popover: #FFFFFF;
+    --popover-foreground: #1C1B18;
+
+    /* Warm Cognac / Bronze Primary */
+    --primary: #8D5B28;
+    --primary-hover: #73471D;
+    --primary-foreground: #FFFFFF;
+
+    /* Subtle beige tone for secondary surfaces */
+    --secondary: #F3EFE7;
+    --secondary-foreground: #2E2B25;
+
+    --muted: #EFEBE2;
+    --muted-foreground: #6B655B;
+
+    --accent: #F4EFE6;
+    --accent-foreground: #1C1B18;
+
+    --destructive: #B91C1C;
+    --destructive-foreground: #FFFFFF;
+
+    --border: #E5DFCDB0;
+    --border-strong: #D5CEBD;
+    --input: #E5DFCD;
+    --ring: #8D5B28;
+
+    --radius: 0.5rem;
+
+    /* Semantic Status Accents */
+    --success: #246E47;
+    --success-bg: #EEF7F2;
+    --success-border: #C6E7D2;
+
+    --warning: #B45309;
+    --warning-bg: #FFFBEB;
+    --warning-border: #FDE68A;
+
+    --danger: #B91C1C;
+    --danger-bg: #FEF2F2;
+    --danger-border: #FECACA;
+
+    --info: #1D4ED8;
+    --info-bg: #EFF6FF;
+    --info-border: #BFDBFE;
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars with warm beige styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3EFE7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D9D2C4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8B0A0;
+}
+
+/* Keyframes for subtle micro-animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Accessible focus ring */
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Prevent horizontal scroll bleed from tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive text truncation */
+.truncate-sm {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Smooth slide-up for mobile modals */
+@keyframes slideUp {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
