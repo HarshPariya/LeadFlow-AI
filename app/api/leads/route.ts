@@ -276,7 +276,10 @@ export async function POST(req: NextRequest) {
 
     // 5. Generate Canonical Automation Event
     const eventId = `evt_${lead._id.toString()}_${Date.now()}`;
-    const canonicalEvent = mapLeadToCanonicalEvent(lead, { eventId });
+    const canonicalEvent = mapLeadToCanonicalEvent(lead, {
+      eventId,
+      developerEmail: ctx.user?.email || env.SALES_NOTIFICATION_EMAIL,
+    });
 
     // Mark lead status as running lifecycle
     lead.automationStatus = "SUCCESS";
