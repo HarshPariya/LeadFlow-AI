@@ -341,7 +341,7 @@ export default function LeadsPage() {
                           {lead.source?.replace("_", " ")}
                         </td>
                         <td className="py-3 px-3">
-                          {lead.twentyPersonId ? (
+                          {lead.twentyPersonId || lead.syncStatus === "SYNCED" ? (
                             <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#246E47]">
                               <CheckCircle className="w-3 h-3" />
                               Synced
@@ -421,7 +421,7 @@ export default function LeadsPage() {
                       <PriorityBadge priority={lead.priority} />
                       <ScoreBadge score={lead.aiScore} size="sm" />
                       <AutomationStatusBadge status={lead.automationStatus} />
-                      {!lead.twentyPersonId && (
+                      {!(lead.twentyPersonId || lead.syncStatus === "SYNCED") && (
                         <button
                           onClick={() => handleSyncTwenty(lead._id)}
                           className="text-[11px] font-semibold text-[#8D5B28] underline underline-offset-2 cursor-pointer"
@@ -429,7 +429,7 @@ export default function LeadsPage() {
                           Sync CRM
                         </button>
                       )}
-                      {lead.twentyPersonId && (
+                      {(lead.twentyPersonId || lead.syncStatus === "SYNCED") && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#246E47]">
                           <CheckCircle className="w-3 h-3" /> CRM Synced
                         </span>

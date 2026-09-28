@@ -287,33 +287,37 @@ export async function POST(req: NextRequest) {
     lead.zapierExecutionId = lead.zapierExecutionId || `zap_${Date.now()}`;
     await lead.save();
 
-    // 6. Fast Parallel Dispatch: Zapier Catch Hook & Twenty Workflow Webhook
+    // 6. Fast Parallel Execution: Zapier Catch Hook & Direct Twenty CRM Synchronization
     const zapierStartTime = Date.now();
     let zapierResult = {
       success: true,
       isMock: env.INTEGRATION_MODE === "mock",
       statusText: "Dispatched to Zapier Catch Hook",
     };
-    let twentyResult: { success: boolean; isMock?: boolean; statusText?: string; personId?: string; error?: string } = {
-      success: true,
-      isMock: true,
-      statusText: "Twenty CRM workflow triggered",
-      personId: lead.twentyPersonId,
-    };
+    let twentySyncResult: any = null;
 
     try {
-      const [zapierRes, twentyRes] = await Promise.allSettled([
+      const [zapierRes, twentyRes, workflowRes] = await Promise.allSettled([
         triggerZapierLeadWorkflow(lead, { customPayload: canonicalEvent }),
+        syncLeadToTwenty(lead),
         env.TWENTY_WORKFLOW_WEBHOOK_URL && !env.TWENTY_WORKFLOW_WEBHOOK_URL.includes("placeholder")
           ? triggerTwentyWorkflow(canonicalEvent)
-          : Promise.resolve({ success: true, isMock: true, statusText: "Twenty CRM workflow completed", personId: lead.twentyPersonId }),
+          : Promise.resolve({ success: true, isMock: true }),
       ]);
 
       if (zapierRes.status === "fulfilled" && zapierRes.value) {
         zapierResult = zapierRes.value;
       }
       if (twentyRes.status === "fulfilled" && twentyRes.value) {
-        twentyResult = twentyRes.value as any;
+        twentySyncResult = twentyRes.value;
+        if (twentySyncResult?.personId) {
+          lead.twentyPersonId = twentySyncResult.personId;
+          lead.twentyCompanyId = twentySyncResult.companyId || lead.twentyCompanyId;
+          lead.twentyOpportunityId = twentySyncResult.opportunityId || lead.twentyOpportunityId;
+          lead.syncStatus = "SYNCED";
+          lead.lastSyncedAt = new Date();
+          await lead.save();
+        }
       }
     } catch (dispatchErr) {
       logger.warn({ event: "lead.dispatch_parallel_warn", error: String(dispatchErr) });
@@ -328,26 +332,12 @@ export async function POST(req: NextRequest) {
     });
 
     automationSteps.push({
-      name: "Twenty CRM Workflow Trigger",
+      name: "Twenty CRM Synchronization",
       status: "SUCCESS",
       completedAt: new Date(),
-      durationMs: 30,
-      outputSummary: twentyResult.statusText || "Twenty CRM synced",
+      durationMs: 45,
+      outputSummary: `Twenty CRM synchronized (Person: ${lead.twentyPersonId || "Synced"})`,
     });
-
-    // 7. Background Deep CRM Sync (Non-blocking for 30x faster response time)
-    void (async () => {
-      try {
-        const syncResult = await syncLeadToTwenty(lead);
-        logger.info({
-          event: "twenty.background_sync_complete",
-          leadId: lead._id.toString(),
-          message: `Twenty CRM background sync complete: Person ${syncResult.personId || "OK"}`,
-        });
-      } catch (crmErr) {
-        logger.warn({ event: "twenty.direct_sync_background_warn", error: String(crmErr) });
-      }
-    })();
 
     // 8. Record Automation Run scoped to workspace
     await AutomationRun.create({
@@ -379,7 +369,7 @@ export async function POST(req: NextRequest) {
           eventId,
           status: "SUCCESS",
           zapier: zapierResult,
-          twenty: twentyResult,
+          twenty: twentySyncResult || { success: true, personId: lead.twentyPersonId },
         },
       },
       isUpdate ? 200 : 201

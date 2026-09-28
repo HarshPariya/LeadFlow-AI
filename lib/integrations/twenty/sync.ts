@@ -94,14 +94,33 @@ export async function syncLeadToTwenty(lead: ILead): Promise<TwentySyncResult> {
       if (existingPerson && isValidUUID(existingPerson.id)) {
         twentyPersonId = existingPerson.id;
         action = "UPDATED";
-        // Update person with new details
-        await twentyClient.updatePerson(
-          existingPerson.id,
-          mapLeadToTwentyPerson(lead, twentyCompanyId)
-        );
+        try {
+          await twentyClient.updatePerson(
+            existingPerson.id,
+            mapLeadToTwentyPerson(lead, twentyCompanyId)
+          );
+        } catch (updateErr: any) {
+          if (String(updateErr?.message).includes("phone") || updateErr?.details?.code === "INVALID_PHONE_NUMBER") {
+            const fallbackInput = mapLeadToTwentyPerson(lead, twentyCompanyId);
+            delete fallbackInput.phones;
+            await twentyClient.updatePerson(existingPerson.id, fallbackInput);
+          } else {
+            throw updateErr;
+          }
+        }
       } else {
         const personInput = mapLeadToTwentyPerson(lead, twentyCompanyId);
-        const createdPerson = await twentyClient.createPerson(personInput);
+        let createdPerson;
+        try {
+          createdPerson = await twentyClient.createPerson(personInput);
+        } catch (createErr: any) {
+          if (String(createErr?.message).includes("phone") || createErr?.details?.code === "INVALID_PHONE_NUMBER") {
+            delete personInput.phones;
+            createdPerson = await twentyClient.createPerson(personInput);
+          } else {
+            throw createErr;
+          }
+        }
         if (createdPerson && isValidUUID(createdPerson.id)) {
           twentyPersonId = createdPerson.id;
         }
@@ -109,10 +128,20 @@ export async function syncLeadToTwenty(lead: ILead): Promise<TwentySyncResult> {
       }
     } else {
       // Already has valid UUID, perform update
-      await twentyClient.updatePerson(
-        twentyPersonId,
-        mapLeadToTwentyPerson(lead, twentyCompanyId)
-      );
+      try {
+        await twentyClient.updatePerson(
+          twentyPersonId,
+          mapLeadToTwentyPerson(lead, twentyCompanyId)
+        );
+      } catch (updateErr: any) {
+        if (String(updateErr?.message).includes("phone") || updateErr?.details?.code === "INVALID_PHONE_NUMBER") {
+          const fallbackInput = mapLeadToTwentyPerson(lead, twentyCompanyId);
+          delete fallbackInput.phones;
+          await twentyClient.updatePerson(twentyPersonId, fallbackInput);
+        } else {
+          throw updateErr;
+        }
+      }
       action = "UPDATED";
     }
 
