@@ -35,7 +35,7 @@
 
 - Dual-view toggle: **Kanban Board** & **Table View**.
 - Stages: `NEW`, `QUALIFIED`, `DISCOVERY`, `PROPOSAL`, `NEGOTIATION`, `WON`, `LOST`.
-- Kanban cards display Deal Name, Company, Value in USD ($), Stage probability %, and Assignee avatar.
+- Kanban cards display Deal Name, Company, Value in INR (₹), Stage probability %, and Assignee avatar.
 
 ## 6. Tasks (`/tasks`)
 

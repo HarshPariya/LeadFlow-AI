@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ export default function LeadsPage() {
     notes: "",
   });
 
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
       const query = new URLSearchParams({
@@ -87,11 +87,11 @@ export default function LeadsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, status, priority, source]);
 
   useEffect(() => {
     fetchLeads();
-  }, [page, status, priority, source]);
+  }, [fetchLeads]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

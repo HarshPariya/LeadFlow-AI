@@ -17,6 +17,7 @@ import {
   Building,
   Mail,
 } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface TopbarUser {
   id: string;
@@ -234,7 +235,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
                               <div className="text-[11px] text-[#5C5850]">{o.companyName}</div>
                             </div>
                             <span className="font-bold text-[#246E47] text-[11px]">
-                              ${(o.value || 0).toLocaleString()}
+                              {formatCurrency(o.value)}
                             </span>
                           </Link>
                         ))}

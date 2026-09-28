@@ -178,17 +178,17 @@ export default function IntegrationsPage() {
       case "gmail":
         return {
           key: "gmail",
-          name: "Gmail Communication",
+          name: "Email Communication (Resend / SMTP)",
           category: "Communication",
           type: "Transactional Mail",
           status: item.hasCredentials ? "CONFIGURED" : "NEEDS_CONFIGURATION",
-          purpose: "Sends internal sales notifications for high-priority deals and automated customer follow-up confirmations.",
-          lastActivity: item.lastEvent || "SMTP and Gmail transport initialized",
+          purpose: "Sends automated customer follow-ups and high-priority sales notifications from your verified branded sender address.",
+          lastActivity: item.lastEvent || "Transactional email engine ready",
           configState: item.hasCredentials
-            ? ["✓ Gmail OAuth / App Password configured", "✓ Sender address verified"]
-            : ["⚠ Configure GMAIL_USER and GMAIL_APP_PASSWORD to enable live delivery"],
-          docsUrl: "https://support.google.com/mail/answer/185833",
-          requiredConfig: ["GMAIL_USER", "GMAIL_APP_PASSWORD", "GMAIL_ENABLED"],
+            ? ["✓ Branded sender address configured", "✓ Transactional mail provider active"]
+            : ["⚠ Add RESEND_API_KEY or SMTP credentials to enable live branded delivery"],
+          docsUrl: "https://resend.com/docs",
+          requiredConfig: ["EMAIL_FROM", "RESEND_API_KEY (or SMTP credentials)"],
         };
       default:
         return {

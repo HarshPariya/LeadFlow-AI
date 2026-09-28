@@ -39,7 +39,7 @@ describe("Validation Schemas", () => {
       priority: "HIGH",
       reasoning: "Strong budget and clear need.",
       recommendedAction: "Schedule discovery call.",
-      signals: ["High budget ($100k+)"],
+      signals: ["High budget (₹1,00,000+)"],
     };
 
     const parsed = aiQualificationSchema.safeParse(validAIOutput);

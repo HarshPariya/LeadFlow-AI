@@ -52,5 +52,5 @@ Tests bidirectional data mappings:
 
 - Lead -> Twenty Person (`name.firstName`, `emails.primaryEmail`, `companyId`)
 - Company -> Twenty Company (`domainName`, employee brackets)
-- Opportunity -> Twenty Opportunity (USD conversion to micros)
+- Opportunity -> Twenty Opportunity (INR conversion to micros)
 - Task -> Twenty Task (status normalizations)

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ export default function OpportunitiesPage() {
     notes: "",
   });
 
-  const fetchOpportunities = async () => {
+  const fetchOpportunities = useCallback(async () => {
     setLoading(true);
     try {
       const q = new URLSearchParams({ search });
@@ -67,11 +67,11 @@ export default function OpportunitiesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
   useEffect(() => {
     fetchOpportunities();
-  }, []);
+  }, [fetchOpportunities]);
 
   const handleStageChange = async (oppId: string, newStage: string) => {
     try {

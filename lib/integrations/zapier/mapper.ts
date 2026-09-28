@@ -26,9 +26,10 @@ export function mapLeadToCanonicalEvent(
   const formattedBudget = `₹${(Number(lead.budget) || 0).toLocaleString("en-IN")}`;
   const priority = lead.priority || "MEDIUM";
   const priorityLower = priority.toLowerCase();
-  const developerEmail = (env.SALES_NOTIFICATION_EMAIL && env.SALES_NOTIFICATION_EMAIL !== "sales@leadflow.ai")
-    ? env.SALES_NOTIFICATION_EMAIL
-    : "hpariya195@gmail.com";
+  const developerEmail = env.SALES_NOTIFICATION_EMAIL || "sales@leadflow.ai";
+  const parsedSenderEmail = env.EMAIL_FROM.includes("<")
+    ? env.EMAIL_FROM.match(/<([^>]+)>/)?.[1] || "notifications@leadflow.ai"
+    : env.EMAIL_FROM || "notifications@leadflow.ai";
   const subject = `[${priority} PRIORITY LEAD] ${lead.firstName} ${lead.lastName} — ${lead.company || "Independent"}`;
 
   const emailBody = `🔥 ${priority}-PRIORITY LEAD ALERT
@@ -103,7 +104,7 @@ Timestamp: ${timestamp}`;
     callbackUrl,
     fromName: "LeadFlow AI",
     senderName: "LeadFlow AI",
-    senderEmail: "notifications@leadflow.ai",
+    senderEmail: parsedSenderEmail,
     developerEmail,
     notificationRecipient: developerEmail,
     alertSubject: subject,

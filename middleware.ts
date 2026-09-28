@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
 // Public API endpoints that do not require user session cookies
 const PUBLIC_API_PREFIXES = [
   "/api/auth/google",
+  "/api/auth/login",
   "/api/auth/logout",
   "/api/webhooks/",
 ];

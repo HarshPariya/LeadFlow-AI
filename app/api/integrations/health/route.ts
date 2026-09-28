@@ -77,8 +77,15 @@ export async function GET() {
       ? "CONNECTED"
       : "CONFIGURATION_REQUIRED";
 
-  // 5. Gmail
-  const gmailStatus = env.GMAIL_ENABLED ? "CONNECTED" : "NOT_CONFIGURED";
+  // 5. Email Communication (Resend / SMTP / Gmail)
+  const hasResend = Boolean(env.RESEND_API_KEY && !env.RESEND_API_KEY.includes("placeholder"));
+  const hasSmtp = Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
+  const emailConfigured = hasResend || hasSmtp || env.GMAIL_ENABLED;
+  const emailStatus = isGlobalMock
+    ? "SIMULATED"
+    : emailConfigured
+      ? "CONNECTED"
+      : "CONFIGURATION_REQUIRED";
 
   const integrations: IntegrationHealthItem[] = [
     {
@@ -143,18 +150,22 @@ export async function GET() {
     },
     {
       key: "gmail",
-      name: "Gmail Communication",
+      name: "Email Communication (Resend / SMTP)",
       category: "Communication",
-      status: gmailStatus,
-      isMock: !env.GMAIL_ENABLED || isGlobalMock,
-      message: env.GMAIL_ENABLED
-        ? `Gmail automated notifications enabled (Recipient: ${env.SALES_NOTIFICATION_EMAIL})`
-        : "Gmail notifications handled via Zapier Paths A, B, and C",
-      hasCredentials: env.GMAIL_ENABLED,
-      endpointOrModel: env.SALES_NOTIFICATION_EMAIL,
-      docsUrl: "https://workspace.google.com/products/gmail/",
+      status: emailStatus,
+      isMock: !emailConfigured || isGlobalMock,
+      message: hasResend
+        ? `Resend API active (Sender: ${env.EMAIL_FROM})`
+        : hasSmtp
+          ? `Custom SMTP active (Sender: ${env.EMAIL_FROM})`
+          : env.GMAIL_ENABLED
+            ? `Email notifications enabled (Sender: ${env.EMAIL_FROM})`
+            : "Email notifications simulated (Configure RESEND_API_KEY or SMTP for live delivery)",
+      hasCredentials: emailConfigured,
+      endpointOrModel: env.EMAIL_FROM,
+      docsUrl: "https://resend.com/docs",
       lastTested: new Date().toISOString(),
-      lastEvent: "Zapier Gmail action steps configured",
+      lastEvent: "Transactional email engine ready",
     },
   ];
 

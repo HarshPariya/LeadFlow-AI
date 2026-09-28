@@ -78,7 +78,7 @@ Inspect your Twenty CRM workspace (e.g. `https://<your-workspace>.twenty.com`). 
 | --- | --- | --- |
 | `name` | Text | Opportunity title (e.g. `"Acme Corp — Inbound Deal"`) |
 | `amount.amountMicros` | Number | Budget in micros: `value * 1,000,000` |
-| `amount.currencyCode` | Text | `"USD"` |
+| `amount.currencyCode` | Text | `"INR"` |
 | `stage` | Select | Stage based on priority: `"DISCOVERY"` (HIGH) or `"NEW"`/`"QUALIFIED"` (MEDIUM) |
 | `closeDate` | Date | Expected closing date |
 | `companyId` | Relation | Linked Company ID |

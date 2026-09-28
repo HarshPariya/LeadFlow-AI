@@ -39,6 +39,11 @@ const envSchema = z.object({
   SALES_NOTIFICATION_EMAIL: z.string().default("sales@leadflow.ai"),
   GMAIL_ENABLED: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
 
+  // Production Email Delivery (Resend / Custom SMTP)
+  EMAIL_FROM: z.string().default("LeadFlow AI <notifications@leadflow.ai>"),
+  EMAIL_REPLY_TO: z.string().default("support@leadflow.ai"),
+  RESEND_API_KEY: z.string().optional().default(""),
+
   // SMTP Mail (Optional fallback)
   SMTP_HOST: z.string().optional().default(""),
   SMTP_PORT: z.string().optional().default(""),
@@ -75,6 +80,9 @@ try {
     WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
     SALES_NOTIFICATION_EMAIL: process.env.SALES_NOTIFICATION_EMAIL,
     GMAIL_ENABLED: process.env.GMAIL_ENABLED,
+    EMAIL_FROM: process.env.EMAIL_FROM || process.env.SMTP_FROM,
+    EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
     SMTP_USER: process.env.SMTP_USER,

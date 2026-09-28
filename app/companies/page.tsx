@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ export default function CompaniesPage() {
     notes: "",
   });
 
-  const fetchCompanies = async () => {
+  const fetchCompanies = useCallback(async () => {
     setLoading(true);
     try {
       const q = new URLSearchParams({ search, industry });
@@ -51,11 +51,11 @@ export default function CompaniesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, industry]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [industry]);
+  }, [fetchCompanies]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

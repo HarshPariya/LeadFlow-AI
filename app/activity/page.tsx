@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,7 @@ export default function ActivityLogPage() {
   const [eventType, setEventType] = useState("ALL");
   const [entityType, setEntityType] = useState("ALL");
 
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     setLoading(true);
     try {
       const q = new URLSearchParams({
@@ -42,11 +42,11 @@ export default function ActivityLogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventType, entityType]);
 
   useEffect(() => {
     fetchActivities();
-  }, [eventType, entityType]);
+  }, [fetchActivities]);
 
   const getEventBadge = (type: string) => {
     if (type.includes("AI_")) return <Badge variant="bronze">{type.replace("_", " ")}</Badge>;

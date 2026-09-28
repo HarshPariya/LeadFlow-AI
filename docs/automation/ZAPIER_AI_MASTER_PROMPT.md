@@ -49,6 +49,13 @@ STEP-BY-STEP ZAP SPECIFICATION
 ### STEP 3: PATHS BY ZAPIER
 Create exactly 3 paths: Path A, Path B, and Path C.
 
+> 💡 **PRODUCTION SENDER & BRANDING TIP:**
+> When using a personal `@gmail.com` account in Zapier, Google forces the sender address to be your personal email.
+> To send emails branded from **`LeadFlow AI <notifications@leadflow.ai>`**:
+> - **Option 1 (Built-in Free):** Use the **Email by Zapier** app instead of Gmail. Set `From Name: LeadFlow AI` and `Reply-To: support@leadflow.ai`.
+> - **Option 2 (Custom Domain):** Use the **Resend** or **SendGrid** app in Zapier to send directly from your domain (`notifications@leadflow.ai`).
+> - **Option 3 (Google Workspace):** Connect an official Google Workspace email account (`team@leadflow.ai`).
+
 --------------------------------------------------
 #### PATH A: HIGH PRIORITY
 --------------------------------------------------
@@ -56,10 +63,11 @@ Create exactly 3 paths: Path A, Path B, and Path C.
    - "priority" (Text) Exactly matches "HIGH"
    (Alternative fallback if using score: "score" (Number) Greater than 79)
 
-2. Action 1: Gmail — Send Internal High Priority Notification
-   - App: Gmail
-   - Event: Send Email
-   - To: [SALES_NOTIFICATION_EMAIL] (e.g. sales@yourcompany.com)
+2. Action 1: Send Internal High Priority Notification
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
+   - To: [SALES_NOTIFICATION_EMAIL] (e.g. sales@leadflow.ai)
+   - From Name: LeadFlow AI Alerts
    - Subject: [HIGH PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}
    - Body Type: Plain or HTML
    - Body:
@@ -72,7 +80,7 @@ Lead Details:
 - Company: {{company}}
 - Job Title: {{jobTitle}}
 - Requirement: {{requirement}}
-- Budget: ${{budget}}
+- Budget: {{budgetRupees}}
 - Timeline: {{timeline}}
 - Industry: {{industry}}
 - Source: {{source}}
@@ -86,10 +94,12 @@ AI Qualification:
 
 Please review and reach out immediately within 24 hours.
 
-3. Action 2: Gmail — Send Customer Acknowledgement
-   - App: Gmail
-   - Event: Send Email
+3. Action 2: Send Customer Acknowledgement
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
    - To: {{email}}
+   - From Name: LeadFlow AI
+   - Reply-To: support@leadflow.ai
    - Subject: Your LeadFlow AI inquiry has been received
    - Body:
 Dear {{firstName}},
@@ -108,10 +118,12 @@ The LeadFlow AI Solutions Team
    - "priority" (Text) Exactly matches "MEDIUM"
    (Alternative fallback: "score" (Number) Between 50 and 79)
 
-2. Action 1: Gmail — Send Customer Follow-Up
-   - App: Gmail
-   - Event: Send Email
+2. Action 1: Send Customer Follow-Up
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
    - To: {{email}}
+   - From Name: LeadFlow AI
+   - Reply-To: support@leadflow.ai
    - Subject: Thanks for contacting us — next steps
    - Body:
 Hi {{firstName}},
@@ -125,20 +137,22 @@ Looking forward to speaking with you!
 Best regards,
 LeadFlow AI Team
 
-3. Action 2 (Optional): Gmail — Send Internal Sales Notification
-   - App: Gmail
-   - Event: Send Email
-   - To: [SALES_NOTIFICATION_EMAIL]
+3. Action 2: Send Internal Developer / Sales Notification
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
+   - To: {{developerEmail}}
+   - From Name: LeadFlow AI Alerts
    - Subject: [MEDIUM PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}
    - Body:
-A medium-priority lead has been received.
+A medium-priority lead has been qualified by LeadFlow AI.
 
 - Prospect: {{firstName}} {{lastName}} ({{email}})
 - Company: {{company}}
-- Budget: ${{budget}}
-- AI Score: {{score}}
+- Budget: {{budgetRupees}}
+- AI Score: {{score}} / 100
 - Priority: {{priority}}
 - Summary: {{summary}}
+- Recommended Action: {{recommendedAction}}
 
 --------------------------------------------------
 #### PATH C: LOW PRIORITY
@@ -147,10 +161,28 @@ A medium-priority lead has been received.
    - "priority" (Text) Exactly matches "LOW"
    (Alternative fallback: "score" (Number) Less than 50)
 
-2. Action 1: Gmail — Send Nurture Email
-   - App: Gmail
-   - Event: Send Email
+2. Action 1: Send Internal Developer / Sales Notification (Low Priority Alert)
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
+   - To: {{developerEmail}}
+   - From Name: LeadFlow AI Alerts
+   - Subject: [LOW PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}
+   - Body:
+A low-priority lead has been registered and added to the nurture sequence.
+
+- Prospect: {{firstName}} {{lastName}} ({{email}})
+- Company: {{company}}
+- Budget: {{budgetRupees}}
+- AI Score: {{score}} / 100
+- Priority: {{priority}}
+- Summary: {{summary}}
+
+3. Action 2: Send Nurture Email to Customer
+   - App: Email by Zapier (or Gmail / Resend)
+   - Event: Send Outbound Email (or Send Email)
    - To: {{email}}
+   - From Name: LeadFlow AI
+   - Reply-To: support@leadflow.ai
    - Subject: Thanks for your interest in LeadFlow AI
    - Body:
 Hi {{firstName}},
@@ -198,6 +230,10 @@ TEST PAYLOADS (TEST ALL 3 BRANCHES INDEPENDENTLY)
 
 IMPORTANT: To test all 3 Paths, send each test payload to your Catch Hook URL individually. A Zapier Path only executes when its specific condition is met!
 
+> ⚠️ **CRITICAL: PREVENT BOUNCE NOTIFICATIONS WHEN TESTING**
+> Before testing any Zap step that sends an email to `{{email}}`, **replace the sample email address (like `priya.patel@growthscale.io`) with your own real inbox**!
+> Fictional test domains like `@growthscale.io` do not have active receiving mail servers. Attempting to deliver live email to them will cause Google Mail to return a **"Message not delivered / Delivery incomplete"** bounce notification from `mailer-daemon@googlemail.com`.
+
 ### TEST 1: HIGH PRIORITY (Score: 92, Priority: HIGH)
 {
   "event": "lead.qualified",
@@ -218,7 +254,7 @@ IMPORTANT: To test all 3 Paths, send each test payload to your Catch Hook URL in
   "score": 92,
   "priority": "HIGH",
   "category": "AI Automation",
-  "summary": "High-intent enterprise CTO seeking comprehensive support automation with $200k budget and immediate 30-day timeline.",
+  "summary": "High-intent enterprise CTO seeking comprehensive support automation with ₹2,00,000 budget and immediate 30-day timeline.",
   "recommendedAction": "Schedule executive discovery call within 24 hours.",
   "lead": {
     "id": "lead_test_high_123",
@@ -238,7 +274,7 @@ IMPORTANT: To test all 3 Paths, send each test payload to your Catch Hook URL in
     "score": 92,
     "priority": "HIGH",
     "category": "AI Automation",
-    "summary": "High-intent enterprise CTO seeking comprehensive support automation with $200k budget and immediate 30-day timeline.",
+    "summary": "High-intent enterprise CTO seeking comprehensive support automation with ₹2,00,000 budget and immediate 30-day timeline.",
     "recommendedAction": "Schedule executive discovery call within 24 hours.",
     "signals": ["Clear business requirement", "High budget", "Short timeline", "Executive role"]
   }

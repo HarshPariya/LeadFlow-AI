@@ -71,16 +71,25 @@ Add a **Paths by Zapier** step with 3 distinct paths:
 
 #### PATH A: HIGH Priority
 
+> 💡 **PRODUCTION SENDER & BRANDING TIP:**
+> If you connect a personal `@gmail.com` account in Zapier, Google forces the sender address to be your personal Gmail.
+> To send emails as **`LeadFlow AI <notifications@leadflow.ai>`**:
+>
+> - **Option 1 (Built-in & Free):** Use the **Email by Zapier** app instead of Gmail. Set `From Name: LeadFlow AI` and `Reply-To: team@leadflow.ai`.
+> - **Option 2 (Production Custom Domain):** Use the **Resend** or **SendGrid** app in Zapier to send directly from your verified domain (`notifications@leadflow.ai`).
+> - **Option 3 (Google Workspace):** Connect an official Google Workspace email account (`team@leadflow.ai`).
+
 1. **Path Rules:**
    - Field: `priority`
    - Condition: `(Text) Exactly matches`
    - Value: `HIGH`
    *(Optional numeric fallback: `score` (Number) Greater than 79)*
 
-2. **Action 4A.1 (Internal High-Priority Gmail Notification):**
-   - **App:** `Gmail`
-   - **Event:** `Send Email`
-   - **To:** Enter your sales notification email (e.g. `sales@yourcompany.com`)
+2. **Action 4A.1 (Internal High-Priority Notification):**
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
+   - **To:** Enter your sales notification email (e.g. `sales@leadflow.ai`)
+   - **From Name:** `LeadFlow AI Alerts`
    - **Subject:** `[HIGH PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}`
    - **Body:**
 
@@ -94,7 +103,7 @@ Add a **Paths by Zapier** step with 3 distinct paths:
      - Company: {{company}}
      - Job Title: {{jobTitle}}
      - Requirement: {{requirement}}
-     - Budget: ${{budget}}
+     - Budget: {{budgetRupees}}
      - Timeline: {{timeline}}
 
      AI Qualification Assessment:
@@ -108,9 +117,11 @@ Add a **Paths by Zapier** step with 3 distinct paths:
      ```
 
 3. **Action 4A.2 (Customer Acknowledgement Email):**
-   - **App:** `Gmail`
-   - **Event:** `Send Email`
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
    - **To:** `{{email}}`
+   - **From Name:** `LeadFlow AI`
+   - **Reply-To:** `support@leadflow.ai`
    - **Subject:** `Your LeadFlow AI inquiry has been received`
    - **Body:**
 
@@ -136,9 +147,11 @@ Add a **Paths by Zapier** step with 3 distinct paths:
    *(Optional numeric fallback: `score` (Number) Between 50 and 79)*
 
 2. **Action 4B.1 (Customer Follow-Up Email):**
-   - **App:** `Gmail`
-   - **Event:** `Send Email`
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
    - **To:** `{{email}}`
+   - **From Name:** `LeadFlow AI`
+   - **Reply-To:** `support@leadflow.ai`
    - **Subject:** `Thanks for contacting us — next steps for {{company}}`
    - **Body:**
 
@@ -155,11 +168,13 @@ Add a **Paths by Zapier** step with 3 distinct paths:
      The LeadFlow AI Team
      ```
 
-3. **Action 4B.2 (Optional Internal Sales Notice):**
-   - **App:** `Gmail`
-   - **Event:** `Send Email`
-   - **To:** Enter your sales notification email
+3. **Action 4B.2 (Internal Developer / Sales Notification):**
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
+   - **To:** `{{developerEmail}}` (or enter `team@leadflow.ai`)
+   - **From Name:** `LeadFlow AI Alerts`
    - **Subject:** `[MEDIUM PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}`
+   - **Body:** `{{emailBody}}` (or the structured notification details)
 
 ---
 
@@ -171,10 +186,20 @@ Add a **Paths by Zapier** step with 3 distinct paths:
    - Value: `LOW`
    *(Optional numeric fallback: `score` (Number) Less than 50)*
 
-2. **Action 4C.1 (Nurture Resource Email):**
-   - **App:** `Gmail`
-   - **Event:** `Send Email`
+2. **Action 4C.1 (Internal Developer / Sales Notification for Low Priority):**
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
+   - **To:** `{{developerEmail}}` (or enter `team@leadflow.ai`)
+   - **From Name:** `LeadFlow AI Alerts`
+   - **Subject:** `[LOW PRIORITY LEAD] {{firstName}} {{lastName}} — {{company}}`
+   - **Body:** `{{emailBody}}` (or: "A low-priority lead has been registered: {{firstName}} {{lastName}} ({{email}}), Company: {{company}}, AI Score: {{score}}/100. Added to nurture pipeline.")
+
+3. **Action 4C.2 (Nurture Resource Email to Customer):**
+   - **App:** `Email by Zapier` (or `Gmail` / `Resend`)
+   - **Event:** `Send Outbound Email` (or `Send Email`)
    - **To:** `{{email}}`
+   - **From Name:** `LeadFlow AI`
+   - **Reply-To:** `support@leadflow.ai`
    - **Subject:** `Thanks for your interest in LeadFlow AI`
    - **Body:**
 
@@ -241,6 +266,10 @@ Add a **Paths by Zapier** step with 3 distinct paths:
   }
 }
 ```
+
+> ⚠️ **CRITICAL TESTING RULE — PREVENT BOUNCE NOTIFICATIONS:**
+> When testing email actions in Zapier, **replace dummy emails (like `priya.patel@growthscale.io` or `@example.com`) with your own real email address**!
+> Fictional test domains like `@growthscale.io` do not have real receiving mail servers. Attempting to deliver live email to them will cause Google Mail to return a **"Message not delivered / Delivery incomplete"** bounce notification from `mailer-daemon@googlemail.com`.
 
 #### MEDIUM Test Fixture (score: 65, priority: "MEDIUM")
 

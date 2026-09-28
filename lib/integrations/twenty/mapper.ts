@@ -83,7 +83,7 @@ export function mapOpportunityToTwentyOpportunity(
   twentyPersonId?: string,
   priority: "HIGH" | "MEDIUM" | "LOW" = "MEDIUM"
 ): TwentyOpportunityInput {
-  // Convert dollars to micros (Twenty CRM stores amounts in micros: 1 USD = 1,000,000 micros)
+  // Convert rupees to micros (Twenty CRM stores amounts in micros: 1 INR = 1,000,000 micros)
   const amountMicros = Math.round((opp.value || 25000) * 1_000_000);
   const rawStage = opp.stage || getOpportunityStageForPriority(priority);
   const stage = TWENTY_VALID_STAGES[rawStage.toUpperCase()] || "SCREENING";
@@ -92,7 +92,7 @@ export function mapOpportunityToTwentyOpportunity(
     name: opp.name || "Commercial Opportunity",
     amount: {
       amountMicros,
-      currencyCode: "USD",
+      currencyCode: "INR",
     },
     stage,
     closeDate: opp.expectedCloseDate

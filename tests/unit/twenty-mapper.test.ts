@@ -35,16 +35,16 @@ describe("Twenty CRM Mapper", () => {
     expect(mapped.address?.addressCountry).toBe("United States");
   });
 
-  it("should convert USD amount into micros for Twenty Opportunity", () => {
+  it("should convert INR amount into micros for Twenty Opportunity", () => {
     const mockOpp = {
       name: "Freight Engine",
-      value: 50000, // $50,000
+      value: 50000, // ₹50,000
       stage: "QUALIFIED" as const,
     };
 
     const mapped = mapOpportunityToTwentyOpportunity(mockOpp);
     // 50,000 * 1,000,000 = 50,000,000,000 micros
     expect(mapped.amount.amountMicros).toBe(50000000000);
-    expect(mapped.amount.currencyCode).toBe("USD");
+    expect(mapped.amount.currencyCode).toBe("INR");
   });
 });

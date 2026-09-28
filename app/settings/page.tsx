@@ -49,6 +49,7 @@ export default function SettingsPage() {
         <div className="rounded-xl border border-[#ECE7DE] bg-white p-6 shadow-2xs space-y-5">
           <div className="flex items-center gap-3">
             {!avatarError && (user?.avatarUrl || user?.avatar) ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.avatarUrl || user.avatar}
                 alt={user.name || "User Avatar"}
@@ -62,10 +63,10 @@ export default function SettingsPage() {
               </div>
             )}
             <div>
-              <h2 className="text-base font-bold text-[#1C1B18]">{user?.name || "Authenticated User"}</h2>
+              <h2 className="text-base font-bold text-[#1C1B18]">{user?.name || "Workspace Admin"}</h2>
               <p className="text-xs text-[#5C5850] flex items-center gap-1.5 mt-0.5">
                 <Mail className="w-3.5 h-3.5 text-[#8D5B28]" />
-                <span>{user?.email || "harshpariya195@gmail.com"}</span>
+                <span>{user?.email || "admin@leadflow.ai"}</span>
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase bg-[#EEF7F2] text-[#246E47] border border-[#C6E7D2] flex items-center gap-1">
@@ -83,14 +84,14 @@ export default function SettingsPage() {
             <div>
               <label className="text-[#8C867B] font-semibold">Display Name</label>
               <div className="font-semibold text-[#1C1B18] mt-1">
-                {user?.name || "Harsh Pariya"}
+                {user?.name || "Workspace Administrator"}
               </div>
             </div>
             <div>
               <label className="text-[#8C867B] font-semibold">Google Account Email</label>
               <div className="font-semibold text-[#1C1B18] mt-1 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#8D5B28]" />
-                {user?.email || "harshpariya195@gmail.com"}
+                {user?.email || "admin@leadflow.ai"}
               </div>
             </div>
             <div>

@@ -18,7 +18,7 @@ export interface IOpportunity extends Document {
   companyId?: mongoose.Types.ObjectId;
   leadId?: mongoose.Types.ObjectId;
   primaryContact: string; // Contact person name or email
-  value: number; // in USD
+  value: number; // in INR (₹)
   stage: OpportunityStage;
   probability: number; // 0 - 100 percentage
   expectedCloseDate?: Date;

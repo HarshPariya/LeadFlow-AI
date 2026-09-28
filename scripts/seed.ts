@@ -143,9 +143,9 @@ export async function runSeed() {
       aiSummary:
         "Marcus Sterling is an executive operations leader seeking complete CRM synchronization and automated broker routing for high-volume freight contracts.",
       aiReasoning:
-        "High budget ($120k), immediate 30-day timeline, clear executive decision maker, and mission-critical automation need.",
+        "High budget (₹1,20,000), immediate 30-day timeline, clear executive decision maker, and mission-critical automation need.",
       aiRecommendedAction: "Conduct executive technical architecture review and map freight dispatch webhooks.",
-      aiSignals: ["High enterprise budget ($120k)", "Urgent 30-day deployment", "Executive decision maker (VP)"],
+      aiSignals: ["High enterprise budget (₹1,20,000)", "Urgent 30-day deployment", "Executive decision maker (VP)"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 2),
       twentyPersonId: "twenty_person_marcus_demo",
@@ -176,9 +176,9 @@ export async function runSeed() {
       aiSummary:
         "CTO Dr. Evelyn Chen requires automated hospital pilot lead intake synchronized to CRM with enterprise compliance.",
       aiReasoning:
-        "Strong commercial budget ($85k), verified technical fit, and urgent expansion across hospital networks.",
+        "Strong commercial budget (₹85,000), verified technical fit, and urgent expansion across hospital networks.",
       aiRecommendedAction: "Host technical deep-dive regarding Zapier webhooks and Twenty CRM data schema.",
-      aiSignals: ["Executive buyer (CTO)", "Significant budget ($85k)", "High-intent referral"],
+      aiSignals: ["Executive buyer (CTO)", "Significant budget (₹85,000)", "High-intent referral"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 5),
       twentyPersonId: "twenty_person_evelyn_demo",
@@ -209,9 +209,9 @@ export async function runSeed() {
       aiSummary:
         "Henrik Lindqvist leads European omnichannel sales aiming to automate supplier intake and dealer partner onboarding.",
       aiReasoning:
-        "Commercial budget ($65k), established international enterprise, and clear integration architecture.",
+        "Commercial budget (₹65,000), established international enterprise, and clear integration architecture.",
       aiRecommendedAction: "Send customized solution proposal with Zapier webhook contract.",
-      aiSignals: ["Clear operational scope", "Commercial budget ($65k)", "Enterprise scale (500+ employees)"],
+      aiSignals: ["Clear operational scope", "Commercial budget (₹65,000)", "Enterprise scale (500+ employees)"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 8),
       twentyPersonId: "twenty_person_henrik_demo",
@@ -241,9 +241,9 @@ export async function runSeed() {
       aiSummary:
         "Sarah Jenkins is focused on sub-minute lead response times using AI qualification and Gmail notifications.",
       aiReasoning:
-        "Moderate budget ($35k), high urgency for inbound speed to lead, Director-level sponsor.",
+        "Moderate budget (₹35,000), high urgency for inbound speed to lead, Director-level sponsor.",
       aiRecommendedAction: "Demonstrate live webhook test and instant Gmail notification latency.",
-      aiSignals: ["Speed-to-lead focus", "Moderate budget ($35k)", "Urgent implementation"],
+      aiSignals: ["Speed-to-lead focus", "Moderate budget (₹35,000)", "Urgent implementation"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 12),
       syncStatus: "SYNCED" as const,
@@ -271,7 +271,7 @@ export async function runSeed() {
       aiSummary:
         "Managing partner seeks case value screening and partner routing for litigation inquiries.",
       aiReasoning:
-        "Solid business intent, boutique law firm budget ($25k), clear routing requirements.",
+        "Solid business intent, boutique law firm budget (₹25,000), clear routing requirements.",
       aiRecommendedAction: "Provide intake criteria demo and case qualification workflow preview.",
       aiSignals: ["Partner buyer", "Clear routing rules", "Standard boutique budget"],
       aiModel: "llama-3.3-70b-versatile",
@@ -327,9 +327,9 @@ export async function runSeed() {
       aiScore: 32,
       aiCategory: "SMB Micro-Business",
       aiSummary: "Independent architect seeking basic inquiry autoresponder.",
-      aiReasoning: "Low budget ($3.5k), low inquiry volume, non-enterprise scope.",
+      aiReasoning: "Low budget (₹3,500), low inquiry volume, non-enterprise scope.",
       aiRecommendedAction: "Provide standard self-service setup guide and docs.",
-      aiSignals: ["Low budget (<$5k)", "Low volume", "No enterprise requirement"],
+      aiSignals: ["Low budget (<₹5,000)", "Low volume", "No enterprise requirement"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 24),
       syncStatus: "NOT_SYNCED" as const,
@@ -599,7 +599,7 @@ export async function runSeed() {
       entityType: "opportunity" as const,
       entityId: opportunities[2]._id.toString(),
       status: "SUCCESS" as const,
-      message: "Commercial deal created: Nordic Commerce — Supplier B2B Intake Hub ($65,000)",
+      message: "Commercial deal created: Nordic Commerce — Supplier B2B Intake Hub (₹65,000)",
     },
   ];
   await ActivityLog.create(activities);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ export default function TasksPage() {
     assignee: "Sales Rep",
   });
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
       const q = new URLSearchParams({ filter });
@@ -51,11 +51,11 @@ export default function TasksPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   useEffect(() => {
     fetchTasks();
-  }, [filter]);
+  }, [fetchTasks]);
 
   const toggleTaskStatus = async (task: any) => {
     const nextStatus = task.status === "COMPLETED" ? "TODO" : "COMPLETED";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
@@ -50,7 +50,7 @@ export default function LeadDetailPage({
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-  const fetchLeadData = async () => {
+  const fetchLeadData = useCallback(async () => {
     try {
       const res = await fetch(`/api/leads/${id}`);
       const data = await res.json();
@@ -63,11 +63,11 @@ export default function LeadDetailPage({
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchLeadData();
-  }, [id]);
+  }, [fetchLeadData]);
 
   const handleRetryAction = async (target: "all" | "zapier" | "twenty" | "ai") => {
     setActionLoading(target);

@@ -16,12 +16,59 @@ export async function POST(_req: NextRequest) {
       });
     }
 
-    // Ping Zapier Catch Hook with a test ping
-    const testPingPayload = {
-      event: "ping.test",
-      eventId: `test_ping_${Date.now()}`,
+    // Send a complete canonical lead test event so Zapier captures all fields (developerEmail, score, etc.)
+    const testLeadPayload = {
+      event: "lead.qualified",
+      eventId: `test_lead_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      message: "LeadFlow AI Zapier connection verification ping",
+      developerEmail: env.SALES_NOTIFICATION_EMAIL || "team@leadflow.ai",
+      notificationRecipient: env.SALES_NOTIFICATION_EMAIL || "team@leadflow.ai",
+      firstName: "Alex",
+      lastName: "Rivera",
+      email: env.SALES_NOTIFICATION_EMAIL || "team@leadflow.ai",
+      company: "Apex Global Solutions",
+      jobTitle: "VP Operations",
+      requirement: "Automated CRM lead qualification and instant dispatch",
+      budget: 75000,
+      budgetFormatted: "₹75,000",
+      budgetRupees: "₹75,000",
+      currency: "INR",
+      currencySymbol: "₹",
+      timeline: "30 days",
+      industry: "Technology",
+      source: "website",
+      score: 92,
+      priority: "HIGH",
+      priorityLower: "high",
+      priorityUpper: "HIGH",
+      isHigh: true,
+      isMedium: false,
+      isLow: false,
+      category: "Enterprise Sales Automation",
+      summary: "High-value lead seeking automated CRM qualification and routing.",
+      recommendedAction: "Schedule technical discovery call within 24 hours.",
+      fromName: "LeadFlow AI",
+      senderName: "LeadFlow AI",
+      senderEmail: "notifications@leadflow.ai",
+      alertSubject: "[HIGH PRIORITY LEAD] Alex Rivera — Apex Global Solutions",
+      emailSubject: "Your LeadFlow AI inquiry has been received",
+      emailBody: "🔥 HIGH-PRIORITY LEAD ALERT\n\nProspect: Alex Rivera\nCompany: Apex Global Solutions\nAI Score: 92/100\nBudget: ₹75,000\nRequirement: Automated CRM lead qualification and instant dispatch",
+      lead: {
+        id: `lead_test_${Date.now()}`,
+        firstName: "Alex",
+        lastName: "Rivera",
+        email: env.SALES_NOTIFICATION_EMAIL || "team@leadflow.ai",
+        company: "Apex Global Solutions",
+        budget: 75000,
+        budgetFormatted: "₹75,000",
+        budgetRupees: "₹75,000",
+        currency: "INR",
+        currencySymbol: "₹",
+      },
+      qualification: {
+        score: 92,
+        priority: "HIGH",
+      },
     };
 
     const res = await fetch(env.ZAPIER_LEAD_WEBHOOK_URL, {
@@ -30,8 +77,8 @@ export async function POST(_req: NextRequest) {
         "Content-Type": "application/json",
         "User-Agent": "LeadFlow-AI/2.0-Test",
       },
-      body: JSON.stringify(testPingPayload),
-      signal: AbortSignal.timeout(5000),
+      body: JSON.stringify(testLeadPayload),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (res.ok) {
