@@ -155,6 +155,11 @@ export async function sendEmailAndLog(
   }
 
   try {
+    const safeReplyTo =
+      env.EMAIL_REPLY_TO && !isDummyOrDemoEmail(env.EMAIL_REPLY_TO)
+        ? env.EMAIL_REPLY_TO
+        : undefined;
+
     // 3A. Option 1: Modern Transactional Email via Resend API
     if (env.RESEND_API_KEY && !env.RESEND_API_KEY.includes("placeholder")) {
       const htmlBody = payload.html || payload.body.replace(/\n/g, "<br>");
@@ -170,7 +175,7 @@ export async function sendEmailAndLog(
           subject: payload.subject,
           text: payload.body,
           html: htmlBody,
-          reply_to: env.EMAIL_REPLY_TO || undefined,
+          reply_to: safeReplyTo,
         }),
         signal: AbortSignal.timeout(8000),
       });
@@ -191,7 +196,7 @@ export async function sendEmailAndLog(
       await transporter.sendMail({
         from: fromAddress,
         to: payload.to,
-        replyTo: env.EMAIL_REPLY_TO || undefined,
+        replyTo: safeReplyTo,
         subject: payload.subject,
         text: payload.body,
         html: payload.html || payload.body.replace(/\n/g, "<br>"),

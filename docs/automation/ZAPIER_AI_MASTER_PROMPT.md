@@ -95,11 +95,11 @@ AI Qualification:
 Please review and reach out immediately within 24 hours.
 
 3. Action 2: Send Customer Acknowledgement
-   - App: Email by Zapier (or Gmail / Resend)
-   - Event: Send Outbound Email (or Send Email)
+   - App: Gmail (or Resend)
+   - Event: Send Email
    - To: {{email}}
    - From Name: LeadFlow AI
-   - Reply-To: support@leadflow.ai
+   - Reply-To: (Leave empty / blank for 100% Primary Inbox delivery)
    - Subject: Your LeadFlow AI inquiry has been received
    - Body:
 Dear {{firstName}},
@@ -119,11 +119,11 @@ The LeadFlow AI Solutions Team
    (Alternative fallback: "score" (Number) Between 50 and 79)
 
 2. Action 1: Send Customer Follow-Up
-   - App: Email by Zapier (or Gmail / Resend)
-   - Event: Send Outbound Email (or Send Email)
+   - App: Gmail (or Resend)
+   - Event: Send Email
    - To: {{email}}
    - From Name: LeadFlow AI
-   - Reply-To: support@leadflow.ai
+   - Reply-To: (Leave empty / blank for 100% Primary Inbox delivery)
    - Subject: Thanks for contacting us — next steps
    - Body:
 Hi {{firstName}},
@@ -178,11 +178,11 @@ A low-priority lead has been registered and added to the nurture sequence.
 - Summary: {{summary}}
 
 3. Action 2: Send Nurture Email to Customer
-   - App: Email by Zapier (or Gmail / Resend)
-   - Event: Send Outbound Email (or Send Email)
+   - App: Gmail (or Resend)
+   - Event: Send Email
    - To: {{email}}
    - From Name: LeadFlow AI
-   - Reply-To: support@leadflow.ai
+   - Reply-To: (Leave empty / blank for 100% Primary Inbox delivery)
    - Subject: Thanks for your interest in LeadFlow AI
    - Body:
 Hi {{firstName}},
