@@ -27,7 +27,7 @@ export function mapLeadToCanonicalEvent(
   const formattedBudget = `₹${(Number(lead.budget) || 0).toLocaleString("en-IN")}`;
   const priority = lead.priority || "MEDIUM";
   const priorityLower = priority.toLowerCase();
-  const developerEmail = options?.developerEmail || env.SALES_NOTIFICATION_EMAIL || "sales@leadflow.ai";
+  const developerEmail = options?.developerEmail || env.SALES_NOTIFICATION_EMAIL || "leadflow.ai.notifier@gmail.com";
   const parsedSenderEmail = env.EMAIL_FROM.includes("<")
     ? env.EMAIL_FROM.match(/<([^>]+)>/)?.[1] || "notifications@leadflow.ai"
     : env.EMAIL_FROM || "notifications@leadflow.ai";

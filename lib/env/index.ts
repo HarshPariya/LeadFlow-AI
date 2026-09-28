@@ -36,7 +36,7 @@ const envSchema = z.object({
   WEBHOOK_SECRET: z.string().default("leadflow_general_inbound_webhook_secret_2026"),
 
   // Sales Notification & Email
-  SALES_NOTIFICATION_EMAIL: z.string().default("sales@leadflow.ai"),
+  SALES_NOTIFICATION_EMAIL: z.string().default("leadflow.ai.notifier@gmail.com"),
   GMAIL_ENABLED: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
 
   // Production Email Delivery (Resend / Custom SMTP)
