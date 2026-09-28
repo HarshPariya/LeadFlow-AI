@@ -278,7 +278,7 @@ export async function POST(req: NextRequest) {
     const eventId = `evt_${lead._id.toString()}_${Date.now()}`;
     const canonicalEvent = mapLeadToCanonicalEvent(lead, {
       eventId,
-      developerEmail: ctx.user?.email || env.SALES_NOTIFICATION_EMAIL,
+      developerEmail: env.SALES_NOTIFICATION_EMAIL || "leadflow.ai.notifier@gmail.com",
     });
 
     // Mark lead status as running lifecycle

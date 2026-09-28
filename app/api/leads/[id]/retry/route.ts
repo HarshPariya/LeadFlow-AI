@@ -105,7 +105,7 @@ export async function POST(
     const eventId = `retry_evt_${lead._id.toString()}_${Date.now()}`;
     const canonicalEvent = mapLeadToCanonicalEvent(lead, {
       eventId,
-      developerEmail: ctx.user?.email || env.SALES_NOTIFICATION_EMAIL,
+      developerEmail: env.SALES_NOTIFICATION_EMAIL || "leadflow.ai.notifier@gmail.com",
     });
 
     // 2. Retry Twenty CRM

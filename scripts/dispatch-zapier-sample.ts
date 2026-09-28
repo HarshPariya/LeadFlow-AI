@@ -83,7 +83,7 @@ async function main() {
     };
 
     const payload = mapLeadToCanonicalEvent(mockLead as any, {
-      developerEmail: process.env.SALES_NOTIFICATION_EMAIL || "leadflowai.notifier@gmail.com",
+      developerEmail: process.env.SALES_NOTIFICATION_EMAIL || "leadflow.ai.notifier@gmail.com",
     });
 
     console.log(`\nDispatching [${item.priority}] test record (${item.firstName} - ${item.company})...`);
