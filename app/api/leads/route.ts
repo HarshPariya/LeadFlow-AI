@@ -278,11 +278,9 @@ export async function POST(req: NextRequest) {
     const eventId = `evt_${lead._id.toString()}_${Date.now()}`;
     const canonicalEvent = mapLeadToCanonicalEvent(lead, { eventId });
 
-    // Mark lead as synced & success immediately
+    // Mark lead status as running lifecycle
     lead.automationStatus = "SUCCESS";
-    lead.syncStatus = "SYNCED";
-    lead.lastSyncedAt = new Date();
-    lead.twentyPersonId = lead.twentyPersonId || `twenty_p_${lead._id.toString()}`;
+    lead.syncStatus = "PENDING";
     lead.zapierExecutionId = lead.zapierExecutionId || `zap_${Date.now()}`;
     await lead.save();
 

@@ -7,6 +7,7 @@ import { zapierStatusWebhookSchema } from "@/lib/validation/schemas";
 import { verifyAndRecordWebhookEvent, apiSuccess, apiError } from "@/lib/security";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logging";
+import { isValidUUID } from "@/lib/integrations/twenty/sync";
 
 export async function GET() {
   return Response.json({
@@ -90,8 +91,8 @@ export async function POST(req: NextRequest) {
       lead.lastZapierStatus = status;
       lead.automationStatus = status;
       if (zapierExecutionId) lead.zapierExecutionId = zapierExecutionId;
-      if (twentyPersonId) lead.twentyPersonId = twentyPersonId;
-      if (twentyCompanyId) lead.twentyCompanyId = twentyCompanyId;
+      if (twentyPersonId && isValidUUID(twentyPersonId)) lead.twentyPersonId = twentyPersonId;
+      if (twentyCompanyId && isValidUUID(twentyCompanyId)) lead.twentyCompanyId = twentyCompanyId;
       if (status === "FAILED") lead.lastZapierError = message || "Zapier execution failed";
       await lead.save();
     }

@@ -16,11 +16,11 @@ describe("Twenty CRM Mapper", () => {
       country: "Canada",
     };
 
-    const mapped = mapLeadToTwentyPerson(mockLead, "twenty_comp_123");
+    const mapped = mapLeadToTwentyPerson(mockLead, "20000000-0000-4000-8000-000000000002");
     expect(mapped.name.firstName).toBe("Elena");
     expect(mapped.name.lastName).toBe("Rostova");
     expect(mapped.emails.primaryEmail).toBe("elena@synthetixhealth.com");
-    expect(mapped.companyId).toBe("twenty_comp_123");
+    expect(mapped.companyId).toBe("20000000-0000-4000-8000-000000000002");
   });
 
   it("should map Company to Twenty Company", () => {

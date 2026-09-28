@@ -10,6 +10,7 @@ import { verifyAndRecordWebhookEvent, apiSuccess, apiError } from "@/lib/securit
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logging";
 import { getOpportunityStageForPriority, getTaskDueDateForPriority } from "@/lib/integrations/twenty/mapper";
+import { isValidUUID } from "@/lib/integrations/twenty/sync";
 
 export async function GET() {
   return Response.json({
@@ -85,10 +86,15 @@ export async function POST(req: NextRequest) {
     }
 
     if (status === "SUCCESS") {
-      if (payload.personId) lead.twentyPersonId = payload.personId;
-      if (payload.companyId) lead.twentyCompanyId = payload.companyId;
-      if (payload.opportunityId) lead.twentyOpportunityId = payload.opportunityId;
-      if (payload.taskId) lead.twentyTaskId = payload.taskId;
+      const validPersonId = isValidUUID(payload.personId) ? payload.personId : undefined;
+      const validCompanyId = isValidUUID(payload.companyId) ? payload.companyId : undefined;
+      const validOppId = isValidUUID(payload.opportunityId) ? payload.opportunityId : undefined;
+      const validTaskId = isValidUUID(payload.taskId) ? payload.taskId : undefined;
+
+      if (validPersonId) lead.twentyPersonId = validPersonId;
+      if (validCompanyId) lead.twentyCompanyId = validCompanyId;
+      if (validOppId) lead.twentyOpportunityId = validOppId;
+      if (validTaskId) lead.twentyTaskId = validTaskId;
       lead.syncStatus = "SYNCED";
       lead.lastSyncedAt = new Date();
       lead.syncError = undefined;
@@ -103,18 +109,18 @@ export async function POST(req: NextRequest) {
         entityId: leadId,
         source: "twenty",
         status: "SUCCESS",
-        message: `Twenty CRM workflow completed: Person (${payload.personId || "Synced"}), Company (${payload.companyId || "Synced"})`,
+        message: `Twenty CRM workflow completed: Person (${validPersonId || "Synced"}), Company (${validCompanyId || "Synced"})`,
         metadata: {
           eventId,
-          personId: payload.personId,
-          companyId: payload.companyId,
-          opportunityId: payload.opportunityId,
-          taskId: payload.taskId,
+          personId: validPersonId,
+          companyId: validCompanyId,
+          opportunityId: validOppId,
+          taskId: validTaskId,
         },
       });
 
       // If an Opportunity was created by Twenty, persist/update locally
-      if (payload.opportunityId) {
+      if (validOppId) {
         const stage = getOpportunityStageForPriority(lead.priority);
         await Opportunity.findOneAndUpdate(
           { workspaceId: lead.workspaceId, leadId: lead._id },
@@ -128,7 +134,7 @@ export async function POST(req: NextRequest) {
             value: lead.budget || 25000,
             stage,
             probability: lead.priority === "HIGH" ? 70 : 40,
-            twentyOpportunityId: payload.opportunityId,
+            twentyOpportunityId: validOppId,
           },
           { upsert: true, new: true }
         );
@@ -138,16 +144,16 @@ export async function POST(req: NextRequest) {
           userId: lead.createdBy,
           eventType: "OPPORTUNITY_CREATED",
           entityType: "opportunity",
-          entityId: payload.opportunityId,
+          entityId: validOppId,
           source: "twenty",
           status: "SUCCESS",
           message: `Twenty CRM created Opportunity (${stage} Stage)`,
-          metadata: { opportunityId: payload.opportunityId, priority: lead.priority },
+          metadata: { opportunityId: validOppId, priority: lead.priority },
         });
       }
 
       // If a Task was created by Twenty, persist/update locally
-      if (payload.taskId) {
+      if (validTaskId) {
         const dueDate = getTaskDueDateForPriority(lead.priority);
         await Task.findOneAndUpdate(
           { workspaceId: lead.workspaceId, leadId: lead._id },
@@ -163,6 +169,7 @@ export async function POST(req: NextRequest) {
             dueDate,
             status: "TODO",
             assignee: "Sales Rep",
+            twentyTaskId: validTaskId,
           },
           { upsert: true, new: true }
         );

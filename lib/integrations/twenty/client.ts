@@ -221,7 +221,7 @@ export class TwentyClient {
 
   async createPerson(input: TwentyPersonInput): Promise<{ id: string }> {
     if (this.isMock) {
-      const mockId = `twenty_person_sim_${Date.now().toString(36)}`;
+      const mockId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "10000000-0000-4000-8000-000000000001";
       logger.info({
         event: "twenty.person_created_simulated",
         message: `Simulated Twenty person creation: ${mockId}`,
@@ -283,7 +283,7 @@ export class TwentyClient {
 
   async createCompany(input: TwentyCompanyInput): Promise<{ id: string }> {
     if (this.isMock) {
-      const mockId = `twenty_comp_sim_${Date.now().toString(36)}`;
+      const mockId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "20000000-0000-4000-8000-000000000002";
       return { id: mockId };
     }
 
@@ -303,7 +303,7 @@ export class TwentyClient {
   // ==========================================
   async createOpportunity(input: TwentyOpportunityInput): Promise<{ id: string }> {
     if (this.isMock) {
-      const mockId = `twenty_opp_sim_${Date.now().toString(36)}`;
+      const mockId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "30000000-0000-4000-8000-000000000003";
       return { id: mockId };
     }
 
@@ -322,7 +322,7 @@ export class TwentyClient {
   // ==========================================
   async createTask(input: TwentyTaskInput): Promise<{ id: string }> {
     if (this.isMock) {
-      const mockId = `twenty_task_sim_${Date.now().toString(36)}`;
+      const mockId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "40000000-0000-4000-8000-000000000004";
       return { id: mockId };
     }
 

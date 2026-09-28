@@ -4,6 +4,8 @@ import fs from "node:fs";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { User } from "../models/User";
+import { Workspace } from "../models/Workspace";
+import { Membership } from "../models/Membership";
 import { Company } from "../models/Company";
 import { Lead } from "../models/Lead";
 import { Opportunity } from "../models/Opportunity";
@@ -55,6 +57,8 @@ export async function runSeed() {
 
   // Clear existing collections
   await Promise.all([
+    Workspace.deleteMany({}),
+    Membership.deleteMany({}),
     User.deleteMany({}),
     Company.deleteMany({}),
     Lead.deleteMany({}),
@@ -81,9 +85,32 @@ export async function runSeed() {
   });
   console.log("✓ Seeded 2 Users (admin@leadflow.ai / LeadFlowDemo2026!)");
 
+  // 1.5. Seed Workspace and Memberships
+  const demoWorkspace = await Workspace.create({
+    name: "Alex Vance's Workspace",
+    slug: "alex-vance-workspace",
+    ownerId: adminUser._id,
+  });
+
+  await Membership.create([
+    {
+      userId: adminUser._id,
+      workspaceId: demoWorkspace._id,
+      role: "OWNER",
+    },
+    {
+      userId: salesUser._id,
+      workspaceId: demoWorkspace._id,
+      role: "ADMIN",
+    },
+  ]);
+  console.log("✓ Seeded Workspace & Memberships");
+
   // 2. Seed 3 Companies
   const companies = await Company.create([
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Apex Logistics Global",
       website: "https://apexlogistics.io",
       industry: "Supply Chain & Logistics",
@@ -92,9 +119,11 @@ export async function runSeed() {
       contactEmail: "ops@apexlogistics.io",
       phone: "+1 (415) 890-1122",
       owner: "Alex Vance",
-      twentyCompanyId: "twenty_comp_apex_demo",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000001",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Synthetix Health AI",
       website: "https://synthetixhealth.com",
       industry: "Healthcare & MedTech",
@@ -103,9 +132,11 @@ export async function runSeed() {
       contactEmail: "contact@synthetixhealth.com",
       phone: "+1 (647) 555-0199",
       owner: "Elena Rostova",
-      twentyCompanyId: "twenty_comp_synthetix_demo",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000002",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Nordic Commerce Group",
       website: "https://nordiccommerce.se",
       industry: "E-Commerce & Retail",
@@ -114,7 +145,7 @@ export async function runSeed() {
       contactEmail: "procurement@nordiccommerce.se",
       phone: "+46 8 123 4567",
       owner: "Alex Vance",
-      twentyCompanyId: "twenty_comp_nordic_demo",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000003",
     },
   ]);
   console.log("✓ Seeded 3 Companies");
@@ -148,8 +179,8 @@ export async function runSeed() {
       aiSignals: ["High enterprise budget (₹1,20,000)", "Urgent 30-day deployment", "Executive decision maker (VP)"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 2),
-      twentyPersonId: "twenty_person_marcus_demo",
-      twentyCompanyId: "twenty_comp_apex_demo",
+      twentyPersonId: "10000000-0000-4000-8000-000000000001",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000001",
       syncStatus: "SYNCED" as const,
       automationStatus: "SUCCESS" as const,
       owner: "Alex Vance",
@@ -181,8 +212,8 @@ export async function runSeed() {
       aiSignals: ["Executive buyer (CTO)", "Significant budget (₹85,000)", "High-intent referral"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 5),
-      twentyPersonId: "twenty_person_evelyn_demo",
-      twentyCompanyId: "twenty_comp_synthetix_demo",
+      twentyPersonId: "10000000-0000-4000-8000-000000000002",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000002",
       syncStatus: "SYNCED" as const,
       automationStatus: "SUCCESS" as const,
       owner: "Elena Rostova",
@@ -214,8 +245,8 @@ export async function runSeed() {
       aiSignals: ["Clear operational scope", "Commercial budget (₹65,000)", "Enterprise scale (500+ employees)"],
       aiModel: "llama-3.3-70b-versatile",
       aiQualifiedAt: new Date(Date.now() - 3600000 * 8),
-      twentyPersonId: "twenty_person_henrik_demo",
-      twentyCompanyId: "twenty_comp_nordic_demo",
+      twentyPersonId: "10000000-0000-4000-8000-000000000003",
+      twentyCompanyId: "20000000-0000-4000-8000-000000000003",
       syncStatus: "SYNCED" as const,
       automationStatus: "SUCCESS" as const,
       owner: "Alex Vance",
@@ -364,12 +395,20 @@ export async function runSeed() {
     },
   ];
 
-  const leads = await Lead.create(leadsData);
+  const leads = await Lead.create(
+    leadsData.map((l) => ({
+      ...l,
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
+    }))
+  );
   console.log(`✓ Seeded ${leads.length} Leads`);
 
   // 4. Seed 5 Opportunities
   const opportunities = await Opportunity.create([
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Apex Logistics — Global Freight Routing Engine",
       companyName: "Apex Logistics Global",
       companyId: companies[0]._id,
@@ -380,9 +419,11 @@ export async function runSeed() {
       probability: 75,
       expectedCloseDate: new Date(Date.now() + 25 * 86400000),
       owner: "Alex Vance",
-      twentyOpportunityId: "twenty_opp_apex_demo",
+      twentyOpportunityId: "30000000-0000-4000-8000-000000000001",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Synthetix Health — Hospital Pilot Intake System",
       companyName: "Synthetix Health AI",
       companyId: companies[1]._id,
@@ -393,9 +434,11 @@ export async function runSeed() {
       probability: 50,
       expectedCloseDate: new Date(Date.now() + 45 * 86400000),
       owner: "Elena Rostova",
-      twentyOpportunityId: "twenty_opp_synthetix_demo",
+      twentyOpportunityId: "30000000-0000-4000-8000-000000000002",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Nordic Commerce — Supplier B2B Intake Hub",
       companyName: "Nordic Commerce Group",
       companyId: companies[2]._id,
@@ -406,9 +449,11 @@ export async function runSeed() {
       probability: 85,
       expectedCloseDate: new Date(Date.now() + 15 * 86400000),
       owner: "Alex Vance",
-      twentyOpportunityId: "twenty_opp_nordic_demo",
+      twentyOpportunityId: "30000000-0000-4000-8000-000000000003",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "CloudScale — Inbound Fast-Response Engine",
       companyName: "CloudScale Systems",
       leadId: leads[3]._id,
@@ -420,6 +465,8 @@ export async function runSeed() {
       owner: "Elena Rostova",
     },
     {
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
       name: "Mendez Legal — Case Value Screening Pipeline",
       companyName: "Mendez & Partners Legal",
       leadId: leads[4]._id,
@@ -435,7 +482,7 @@ export async function runSeed() {
 
   // 5. Seed 8 Tasks
   const now = new Date();
-  const tasks = await Task.create([
+  const tasksData = [
     {
       title: "Schedule technical architecture review with Marcus Sterling",
       description: "Review freight dispatch webhook volume and SLA requirements.",
@@ -443,10 +490,11 @@ export async function runSeed() {
       leadName: "Marcus Sterling",
       companyName: "Apex Logistics Global",
       opportunityId: opportunities[0]._id,
-      priority: "HIGH",
+      priority: "HIGH" as const,
       dueDate: new Date(now.getTime() + 86400000), // Tomorrow
-      status: "TODO",
+      status: "TODO" as const,
       assignee: "Alex Vance",
+      twentyTaskId: "40000000-0000-4000-8000-000000000001",
     },
     {
       title: "Send customized security & compliance brief to Dr. Evelyn Chen",
@@ -455,10 +503,11 @@ export async function runSeed() {
       leadName: "Dr. Evelyn Chen",
       companyName: "Synthetix Health AI",
       opportunityId: opportunities[1]._id,
-      priority: "HIGH",
+      priority: "HIGH" as const,
       dueDate: new Date(now.getTime() + 2 * 86400000),
-      status: "IN_PROGRESS",
+      status: "IN_PROGRESS" as const,
       assignee: "Elena Rostova",
+      twentyTaskId: "40000000-0000-4000-8000-000000000002",
     },
     {
       title: "Deliver revised contract proposal to Henrik Lindqvist",
@@ -467,10 +516,11 @@ export async function runSeed() {
       leadName: "Henrik Lindqvist",
       companyName: "Nordic Commerce Group",
       opportunityId: opportunities[2]._id,
-      priority: "HIGH",
+      priority: "HIGH" as const,
       dueDate: new Date(now.getTime() - 86400000), // Overdue
-      status: "TODO",
+      status: "TODO" as const,
       assignee: "Alex Vance",
+      twentyTaskId: "40000000-0000-4000-8000-000000000003",
     },
     {
       title: "Configure live Gmail notification test for CloudScale demo",
@@ -479,9 +529,9 @@ export async function runSeed() {
       leadName: "Sarah Jenkins",
       companyName: "CloudScale Systems",
       opportunityId: opportunities[3]._id,
-      priority: "MEDIUM",
+      priority: "MEDIUM" as const,
       dueDate: new Date(now.getTime() + 3 * 86400000),
-      status: "TODO",
+      status: "TODO" as const,
       assignee: "Elena Rostova",
     },
     {
@@ -491,9 +541,9 @@ export async function runSeed() {
       leadName: "Carlos Mendez",
       companyName: "Mendez & Partners Legal",
       opportunityId: opportunities[4]._id,
-      priority: "MEDIUM",
+      priority: "MEDIUM" as const,
       dueDate: new Date(now.getTime() + 5 * 86400000),
-      status: "TODO",
+      status: "TODO" as const,
       assignee: "Alex Vance",
     },
     {
@@ -502,28 +552,35 @@ export async function runSeed() {
       leadId: leads[5]._id,
       leadName: "Devon Rishi",
       companyName: "HyperFin Capital",
-      priority: "LOW",
+      priority: "LOW" as const,
       dueDate: new Date(now.getTime() + 14 * 86400000),
-      status: "TODO",
+      status: "TODO" as const,
       assignee: "Elena Rostova",
     },
     {
       title: "Verify Twenty CRM custom fields for freight objects",
       description: "Ensure person custom field mapping matches LeadFlow webhook output.",
-      priority: "MEDIUM",
+      priority: "MEDIUM" as const,
       dueDate: new Date(now.getTime() - 2 * 86400000),
-      status: "COMPLETED",
+      status: "COMPLETED" as const,
       assignee: "Alex Vance",
     },
     {
       title: "Review Zapier status webhook callback logs",
       description: "Verify retry count and error handling under transient HTTP 500s.",
-      priority: "LOW",
+      priority: "LOW" as const,
       dueDate: new Date(now.getTime() - 4 * 86400000),
-      status: "COMPLETED",
+      status: "COMPLETED" as const,
       assignee: "Elena Rostova",
     },
-  ]);
+  ];
+  const tasks = await Task.create(
+    tasksData.map((t) => ({
+      ...t,
+      workspaceId: demoWorkspace._id,
+      createdBy: adminUser._id,
+    }))
+  );
   console.log(`✓ Seeded ${tasks.length} Tasks`);
 
   // 6. Seed Activity Logs
@@ -558,8 +615,8 @@ export async function runSeed() {
       entityType: "lead" as const,
       entityId: leads[0]._id.toString(),
       status: "SUCCESS" as const,
-      message: "Synchronized prospect to Twenty CRM Person (twenty_person_marcus_demo)",
-      metadata: { twentyPersonId: "twenty_person_marcus_demo" },
+      message: "Synchronized prospect to Twenty CRM Person (10000000-0000-4000-8000-000000000001)",
+      metadata: { twentyPersonId: "10000000-0000-4000-8000-000000000001" },
     },
     {
       timestamp: new Date(Date.now() - 3600000 * 2 + 18000),
@@ -602,7 +659,13 @@ export async function runSeed() {
       message: "Commercial deal created: Nordic Commerce — Supplier B2B Intake Hub (₹65,000)",
     },
   ];
-  await ActivityLog.create(activities);
+  await ActivityLog.create(
+    activities.map((a) => ({
+      ...a,
+      workspaceId: demoWorkspace._id,
+      userId: adminUser._id,
+    }))
+  );
   console.log(`✓ Seeded ${activities.length} Activity Logs`);
 
   // 7. Seed Automation Runs
@@ -615,7 +678,7 @@ export async function runSeed() {
       status: "SUCCESS" as const,
       triggerSource: "website",
       durationMs: 460,
-      twentyPersonId: "twenty_person_marcus_demo",
+      twentyPersonId: "10000000-0000-4000-8000-000000000001",
       zapierExecutionId: "zap_run_apex_109283",
       steps: [
         { name: "Lead Submission", status: "SUCCESS" as const, durationMs: 12 },
@@ -634,7 +697,7 @@ export async function runSeed() {
       status: "SUCCESS" as const,
       triggerSource: "referral",
       durationMs: 415,
-      twentyPersonId: "twenty_person_evelyn_demo",
+      twentyPersonId: "10000000-0000-4000-8000-000000000002",
       zapierExecutionId: "zap_run_synthetix_98214",
       steps: [
         { name: "Lead Submission", status: "SUCCESS" as const, durationMs: 10 },
@@ -662,7 +725,12 @@ export async function runSeed() {
       ],
     },
   ];
-  await AutomationRun.create(automationRuns);
+  await AutomationRun.create(
+    automationRuns.map((ar) => ({
+      ...ar,
+      workspaceId: demoWorkspace._id,
+    }))
+  );
   console.log(`✓ Seeded ${automationRuns.length} Automation Runs`);
 
   console.log("🎉 LeadFlow AI Database Successfully Seeded!");
