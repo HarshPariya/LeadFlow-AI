@@ -33,7 +33,7 @@ async function main() {
       firstName: "Alexander",
       lastName: "Wright",
       company: "Enterprise Corp",
-      email: "hpariya195@gmail.com",
+      email: "leadflowai.notifier@gmail.com",
       budget: 750000,
       score: 94,
     },
@@ -42,7 +42,7 @@ async function main() {
       firstName: "Priya",
       lastName: "Sharma",
       company: "Apex Tech Labs",
-      email: "hpariya195@gmail.com",
+      email: "leadflowai.notifier@gmail.com",
       budget: 250000,
       score: 72,
     },
@@ -51,7 +51,7 @@ async function main() {
       firstName: "Rahul",
       lastName: "Verma",
       company: "Verma Digital",
-      email: "hpariya195@gmail.com",
+      email: "leadflowai.notifier@gmail.com",
       budget: 45000,
       score: 48,
     },
@@ -83,7 +83,7 @@ async function main() {
     };
 
     const payload = mapLeadToCanonicalEvent(mockLead as any, {
-      developerEmail: process.env.SALES_NOTIFICATION_EMAIL || "hpariya195@gmail.com",
+      developerEmail: process.env.SALES_NOTIFICATION_EMAIL || "leadflowai.notifier@gmail.com",
     });
 
     console.log(`\nDispatching [${item.priority}] test record (${item.firstName} - ${item.company})...`);
