@@ -162,7 +162,7 @@ export default function LeadDetailPage({
     {
       title: "Twenty CRM Sync",
       description: hasTwentySync
-        ? `Person (${lead.twentyPersonId || "Mapped"}) · Company (${lead.twentyCompanyId || "Mapped"})`
+        ? "Contact person and company account successfully synced to Twenty CRM"
         : "Pending Twenty CRM synchronization",
       done: hasTwentySync,
       time: lead.lastSyncedAt,
@@ -172,8 +172,8 @@ export default function LeadDetailPage({
       description: hasOpportunityCreated
         ? `Commercial opportunity active (${related.opportunities[0]?.stage || "DISCOVERY"})`
         : lead.priority === "LOW"
-        ? "Skipped (Low priority lead kept in nurture)"
-        : "Pending opportunity generation",
+          ? "Skipped (Low priority lead kept in nurture)"
+          : "Pending opportunity generation",
       done: hasOpportunityCreated,
       time: undefined,
     },
@@ -381,9 +381,8 @@ export default function LeadDetailPage({
                       {timelineMilestones.map((milestone, idx) => (
                         <div key={idx} className="relative">
                           <span
-                            className={`absolute -left-6 top-1 flex h-4 w-4 items-center justify-center rounded-full text-white text-[10px] ${
-                              milestone.done ? "bg-[#246E47]" : "bg-[#D9D2C4]"
-                            }`}
+                            className={`absolute -left-6 top-1 flex h-4 w-4 items-center justify-center rounded-full text-white text-[10px] ${milestone.done ? "bg-[#246E47]" : "bg-[#D9D2C4]"
+                              }`}
                           >
                             {milestone.done ? "✓" : "○"}
                           </span>
@@ -511,9 +510,8 @@ export default function LeadDetailPage({
                         >
                           <div className="flex items-center gap-3">
                             <span
-                              className={`h-2.5 w-2.5 rounded-full ${
-                                task.status === "COMPLETED" ? "bg-emerald-500" : "bg-amber-500"
-                              }`}
+                              className={`h-2.5 w-2.5 rounded-full ${task.status === "COMPLETED" ? "bg-emerald-500" : "bg-amber-500"
+                                }`}
                             />
                             <div>
                               <div className="font-semibold text-[#1C1B18]">{task.title}</div>
@@ -546,44 +544,61 @@ export default function LeadDetailPage({
                   Twenty CRM Sync
                 </span>
                 <span
-                  className={`text-[11px] font-bold px-2 py-0.5 rounded ${
-                    lead.twentyPersonId
-                      ? "bg-[#EEF7F2] text-[#246E47]"
-                      : "bg-[#FFFBEB] text-[#B45309]"
-                  }`}
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded ${lead.twentyPersonId
+                    ? "bg-[#EEF7F2] text-[#246E47]"
+                    : "bg-[#FFFBEB] text-[#B45309]"
+                    }`}
                 >
                   {lead.twentyPersonId ? "Synchronized" : "Pending Sync"}
                 </span>
               </div>
 
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-[#8C867B]">Person ID:</span>
-                  <span className="font-mono text-[#1C1B18] text-[11px]">
-                    {lead.twentyPersonId || "Not mapped"}
+              <div className="space-y-2.5 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#8C867B]">Contact Record:</span>
+                  <span className="font-medium text-[#1C1B18] text-[11px]">
+                    {lead.twentyPersonId ? (
+                      <span className="text-[#246E47] font-semibold">✓ Connected</span>
+                    ) : (
+                      "Not mapped"
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8C867B]">Company ID:</span>
-                  <span className="font-mono text-[#1C1B18] text-[11px]">
-                    {lead.twentyCompanyId || "Not mapped"}
+                <div className="flex justify-between items-center">
+                  <span className="text-[#8C867B]">Company Account:</span>
+                  <span className="font-medium text-[#1C1B18] text-[11px]">
+                    {lead.twentyCompanyId ? (
+                      <span className="text-[#246E47] font-semibold">✓ Associated</span>
+                    ) : (
+                      "Not mapped"
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8C867B]">Opportunity ID:</span>
-                  <span className="font-mono text-[#1C1B18] text-[11px]">
-                    {lead.twentyOpportunityId || (lead.priority === "LOW" ? "None (Low)" : "Pending")}
+                <div className="flex justify-between items-center">
+                  <span className="text-[#8C867B]">Commercial Deal:</span>
+                  <span className="font-medium text-[#1C1B18] text-[11px]">
+                    {lead.twentyOpportunityId ? (
+                      <span className="text-[#246E47] font-semibold">✓ Created</span>
+                    ) : lead.priority === "LOW" ? (
+                      <span className="text-[#8C867B]">N/A (Nurture)</span>
+                    ) : (
+                      "Pending"
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8C867B]">Task ID:</span>
-                  <span className="font-mono text-[#1C1B18] text-[11px]">
-                    {lead.twentyTaskId || "Pending callback"}
+                <div className="flex justify-between items-center">
+                  <span className="text-[#8C867B]">Sales Task:</span>
+                  <span className="font-medium text-[#1C1B18] text-[11px]">
+                    {lead.twentyTaskId ? (
+                      <span className="text-[#246E47] font-semibold">✓ Scheduled</span>
+                    ) : (
+                      "Pending"
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center pt-1 border-t border-[#ECE7DE]">
                   <span className="text-[#8C867B]">Last Synced:</span>
-                  <span className="text-[#1C1B18]">{formatDate(lead.lastSyncedAt)}</span>
+                  <span className="text-[#1C1B18] font-medium">{formatDate(lead.lastSyncedAt)}</span>
                 </div>
               </div>
 
