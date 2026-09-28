@@ -110,58 +110,27 @@ export async function POST(req: NextRequest) {
     const currentUser = ctx.user.name || "Authenticated User";
     const workspaceId = ctx.workspaceId;
 
-    // 1. Mandatory Duplicate Prevention: search within current workspace by email
-    const existingLead = await Lead.findOne({
+    // 1. Create discrete new Lead record for every incoming prospect inquiry
+    const lead = await Lead.create({
+      ...parsed.data,
       workspaceId,
-      email: normalizedEmail,
-      isArchived: false,
+      createdBy: ctx.userId,
+      owner: currentUser,
     });
 
-    let isUpdate = false;
-    let lead: ILead;
-
-    if (existingLead) {
-      isUpdate = true;
-      Object.assign(existingLead, parsed.data);
-      existingLead.updatedBy = ctx.userId;
-      existingLead.updatedAt = new Date();
-      lead = await existingLead.save();
-
-      await ActivityLog.create({
-        workspaceId,
-        userId: ctx.userId,
-        actor: currentUser,
-        eventType: "LEAD_UPDATED",
-        entityType: "lead",
-        entityId: lead._id.toString(),
-        user: currentUser,
-        source: parsed.data.source || "website",
-        status: "SUCCESS",
-        message: `Existing prospect updated via duplicate prevention check (${lead.email})`,
-        metadata: { email: lead.email, company: lead.company },
-      });
-    } else {
-      lead = await Lead.create({
-        ...parsed.data,
-        workspaceId,
-        createdBy: ctx.userId,
-        owner: currentUser,
-      });
-
-      await ActivityLog.create({
-        workspaceId,
-        userId: ctx.userId,
-        actor: currentUser,
-        eventType: "LEAD_CREATED",
-        entityType: "lead",
-        entityId: lead._id.toString(),
-        user: currentUser,
-        source: parsed.data.source || "website",
-        status: "SUCCESS",
-        message: `New prospect registered: ${lead.firstName} ${lead.lastName} (${lead.email})`,
-        metadata: { email: lead.email, company: lead.company, budget: lead.budget },
-      });
-    }
+    await ActivityLog.create({
+      workspaceId,
+      userId: ctx.userId,
+      actor: currentUser,
+      eventType: "LEAD_CREATED",
+      entityType: "lead",
+      entityId: lead._id.toString(),
+      user: currentUser,
+      source: parsed.data.source || "website",
+      status: "SUCCESS",
+      message: `New prospect registered: ${lead.firstName} ${lead.lastName} (${lead.email})`,
+      metadata: { email: lead.email, company: lead.company, budget: lead.budget },
+    });
 
     // 2. Company Association / Upsert in MongoDB scoped to workspace
     if (lead.company) {
@@ -201,7 +170,7 @@ export async function POST(req: NextRequest) {
           status: "SUCCESS",
           completedAt: new Date(),
           durationMs: 15,
-          outputSummary: isUpdate ? "Duplicate resolved: updated existing record" : "Unique record persisted to workspace",
+          outputSummary: "Unique record persisted to workspace",
         },
       ];
 
@@ -372,7 +341,7 @@ export async function POST(req: NextRequest) {
           twenty: twentySyncResult || { success: true, personId: lead.twentyPersonId },
         },
       },
-      isUpdate ? 200 : 201
+      201
     );
   } catch (err) {
     return apiError("LEAD_PROCESSING_FAILED", "Failed to process lead lifecycle", 500, err instanceof Error ? err.message : String(err));
