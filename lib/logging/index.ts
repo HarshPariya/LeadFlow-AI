@@ -1,6 +1,7 @@
 export interface StructuredLogPayload {
   event: string;
   level?: "info" | "warn" | "error" | "debug";
+  traceId?: string;
   userId?: string;
   leadId?: string;
   source?: string;
@@ -25,14 +26,19 @@ const SENSITIVE_KEYS = new Set([
   "webhook_secret",
 ]);
 
+const PII_KEYS = new Set(["email", "phone", "fullname", "name", "address"]);
+
 function sanitizeMetadata(data: unknown): unknown {
   if (!data || typeof data !== "object") return data;
   if (Array.isArray(data)) return data.map(sanitizeMetadata);
 
   const clean: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
+    const lowerKey = key.toLowerCase();
+    if (SENSITIVE_KEYS.has(lowerKey)) {
       clean[key] = "[REDACTED]";
+    } else if (PII_KEYS.has(lowerKey) && typeof value === "string") {
+      clean[key] = value.length > 2 ? `${value.substring(0, 2)}***` : "***";
     } else if (typeof value === "object" && value !== null) {
       clean[key] = sanitizeMetadata(value);
     } else {
